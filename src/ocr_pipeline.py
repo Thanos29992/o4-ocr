@@ -176,7 +176,8 @@ def ocr_image(pipe_args, img_path, device, max_w=None, dyn_cap=960):
 # --------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser(description="PP-OCRv4 OCR over OpenVINO")
-    ap.add_argument("--image", required=True)
+    ap.add_argument("--image", default=None,
+                    help="Image to OCR. Omit when --pipe-stdin is used.")
     ap.add_argument("--device", default="CPU",
                     choices=["CPU", "NPU", "GPU", "AUTO", "CPU", "GPU.0"])
     ap.add_argument("--dir", default="models/ppocrv4")
@@ -184,7 +185,11 @@ def main():
     ap.add_argument("--det-height", type=int, default=960)
     ap.add_argument("--rec-width", type=int, default=None,
                     help="Fixed rec width for NPU; leave unset for CPU/GPU")
+    ap.add_argument("--pipe-stdin", action="store_true",
+                    help="Read a PNG image from stdin (grim pipe); print plain text only")
     args = ap.parse_args()
+    if not args.image and not args.pipe_stdin:
+        ap.error("need --image or --pipe-stdin")
 
     device = args.device.upper()
     model_dir = Path(args.dir)
@@ -192,12 +197,31 @@ def main():
         model_dir = Path(__file__).resolve().parent.parent / model_dir
 
     print(f"[load] device={device} det={args.det_width}x{args.det_height} "
-          f"rec_width={args.rec_width}", flush=True)
+          f"rec_width={args.rec_width}", file=sys.stderr, flush=True)
     t0 = time.perf_counter()
     pipe = load_models(model_dir, device,
                        det_shape=(args.det_height, args.det_width),
                        rec_fixed_width=args.rec_width)
-    print(f"[load] compiled in {time.perf_counter()-t0:.2f}s", flush=True)
+    print(f"[load] compiled in {time.perf_counter()-t0:.2f}s",
+          file=sys.stderr, flush=True)
+
+    if args.pipe_stdin:
+        data = sys.stdin.buffer.read()
+        img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
+        if img is None:
+            raise SystemExit("could not decode stdin image")
+        boxes = detect_text_regions(pipe[1], pipe[1].output(0), img,
+                                    det_shape=(960, 960))
+        lines = []
+        for (x, y, w, h) in boxes:
+            crop = img[y:y + h, x:x + w]
+            text, _ = recognize_text(pipe[2], pipe[2].output(0), crop,
+                                     pipe[3], max_w=args.rec_width, dyn_cap=960)
+            if text:
+                lines.append(text)
+        for ln in lines:
+            print(ln)
+        sys.exit(0)
 
     t0 = time.perf_counter()
     results, t_det, t_rec = ocr_image(pipe, args.image, device,
