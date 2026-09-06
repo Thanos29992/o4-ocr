@@ -83,10 +83,13 @@ Takeaways:
 
 * **Latency:** PP-OCRv4-on-NPU (~65–160 ms) beats both tesseract
   (~270–770 ms) *and* PP-OCRv4-on-CPU (~4.5–19.6 s). The rec model is heavy;
-  the NPU eats it.
-* **Accuracy:** on these samples, PP-OCRv4 ≈ tesseract on clean text; PP-OCRv4
-  reads the photo's full paragraphs in one pass as well as tesseract does.
-* tesseract wins on *nothing* except being already-installed.
+  the NPU eats it — roughly a **100× rec-stage speedup** over CPU.
+* **Accuracy:** on crisp text, tesseract is genuinely excellent (97–100%),
+  and PP-OCRv4 matches it (95.7–100%). The NPU's win is **speed**, not
+  accuracy — for a hotkey where you paste text right after, feeling instant
+  matters. Both read the photo's full paragraphs accurately.
+* tesseract's advantage: already installed, zero deps. If OCR ever feels slow
+  or you OCR big/photo-heavy crops, the NPU path is the upgrade.
 
 ## Hardware reality on this box
 
