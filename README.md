@@ -72,12 +72,12 @@ stays dynamic.
 
 For reference, today's `tesseract` (CPU-only, what Omarchy actually uses):
 
-| image | tesseract total |
-|---|---|
-| screenshot_terminal | 377 ms |
-| screenshot_code | 325 ms |
-| screenshot_ui | 268 ms |
-| test_ocr (photo) | 768 ms |
+| image | tesseract total | char-acc |
+|---|---|---|
+| screenshot_terminal | 377 ms | 100.0% |
+| screenshot_code | 325 ms | 97.1% |
+| screenshot_ui | 268 ms | 100.0% |
+| test_ocr (photo) | 768 ms | — |
 
 Takeaways:
 
