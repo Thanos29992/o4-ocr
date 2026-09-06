@@ -1,0 +1,5 @@
+{
+  "screenshot_terminal.png": "shlok@acer ~ $ pacman -Syu :: Synchronizing package databases... core is up to date extra is up to date :: Starting full system upgrade...",
+  "screenshot_code.png": "def ocr_pipeline(image, device): boxes = detect_text_regions(image) return recognize_all(boxes) latency_ms = bench(device)  # NPU target",
+  "screenshot_ui.png": "Nepal Notes Save | Share The quick brown fox jumps over the lazy dog 8080 connected uptime 2h"
+}

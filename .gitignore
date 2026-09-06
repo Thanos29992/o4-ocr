@@ -1,0 +1,20 @@
+# Local runtime artifacts
+.venv/
+__pycache__/
+*.pyc
+*.tar
+
+# Large model WEIGHTS — never committed. Fetched + converted from source by
+# scripts/fetch_models.sh (PaddlePaddle PP-OCRv4 -> OpenVINO IR).
+# Only tiny IR graphs (.xml) + char dictionary are committed.
+models/**/inference.bin
+models/ppocrv4/ch_PP-OCRv4_det_infer/inference.pdmodel
+models/ppocrv4/ch_PP-OCRv4_det_infer/inference.pdiparams
+models/ppocrv4/ch_PP-OCRv4_det_infer/inference.pdiparams.info
+models/ppocrv4/ch_PP-OCRv4_rec_server_infer/inference.pdmodel
+models/ppocrv4/ch_PP-OCRv4_rec_server_infer/inference.pdiparams
+models/ppocrv4/ch_PP-OCRv4_rec_server_infer/inference.pdiparams.info
+
+# Bench/experiment output
+bench_res/
+*.log
